@@ -476,7 +476,7 @@ bool teacherProcess(Teacher& tc, UserList& user_list, StudentCourseList& db_st_c
 
 #pragma region Tien
 void to_upper(string &s) {
-	for (int i = 0; i < s.length(); i++) {
+	for (size_t i = 0; i < s.length(); i++) {
 		s[i] = toupper(s[i]);
 	}
 }
@@ -562,7 +562,7 @@ bool adminProcess(Admin& ad, UserList& user_list, StudentList& db_st_list, Teach
 	else if (agvList.list[0] == "ss") {
 		if (agvList.size > 1) {
 			agvList.removeFromList(0);
-			for (int i = 0; i < agvList.size; i++) {
+			for (size_t i = 0; i < agvList.size; i++) {
 				to_upper(agvList.list[i]);
 			}
 			StudentList sList = db_st_list.findStudentByNameKeyWord(agvList.list, agvList.size);
@@ -606,7 +606,7 @@ bool adminProcess(Admin& ad, UserList& user_list, StudentList& db_st_list, Teach
 	else if (agvList.list[0] == "st") {
 		if (agvList.size > 1) {
 			agvList.removeFromList(0);
-			for (int i = 0; i < agvList.size; i++) {
+			for (size_t i = 0; i < agvList.size; i++) {
 				to_upper(agvList.list[i]);
 			}
 			TeacherList tList = db_tc_list.findTeacherByNameKeyword(agvList.list, agvList.size);
@@ -664,7 +664,7 @@ bool adminProcess(Admin& ad, UserList& user_list, StudentList& db_st_list, Teach
 				else removeList.addToList(username);
 			} while (true);
 			arrayList<string> remove_unsuccess;
-			for (int i = 1; i < removeList.size; i++) {
+			for (size_t i = 1; i < removeList.size; i++) {
 				if (ad.removeUser(removeList.list[i], user_list, db_st_list, db_tc_list) == 1) {
 
 				}
@@ -677,7 +677,7 @@ bool adminProcess(Admin& ad, UserList& user_list, StudentList& db_st_list, Teach
 			}
 			else {
 				cout << "Some user remove unsuccessful! That is:" << endl;
-				for (int j = 0; j < remove_unsuccess.size; j++) {
+				for (size_t j = 0; j < remove_unsuccess.size; j++) {
 					cout << j + 1 << ".\t" << remove_unsuccess.list[j] << endl;
 				}
 				cout << "Other user remove successful!" << endl;
@@ -687,7 +687,7 @@ bool adminProcess(Admin& ad, UserList& user_list, StudentList& db_st_list, Teach
 		else
 		{
 			arrayList<string> remove_unsuccess;
-			for (int i = 1; i < agvList.size; i++) {
+			for (size_t i = 1; i < agvList.size; i++) {
 				if (ad.removeUser(agvList.list[i], user_list, db_st_list, db_tc_list) == 1) {
 					
 				}
@@ -700,7 +700,7 @@ bool adminProcess(Admin& ad, UserList& user_list, StudentList& db_st_list, Teach
 			}
 			else {
 				cout << "Some user remove unsuccessful! That is:" << endl;
-				for (int j = 0; j < remove_unsuccess.size; j++) {
+				for (size_t j = 0; j < remove_unsuccess.size; j++) {
 					cout << j + 1 << ".\t" << remove_unsuccess.list[j] << endl;
 				}
 				cout << "Other user remove successful!" << endl;
@@ -723,7 +723,7 @@ bool adminProcess(Admin& ad, UserList& user_list, StudentList& db_st_list, Teach
 			cout << setw(40) << setfill(' ') << left << "Add Student" << "[as]" << endl;
 			cout << "Input <as> then input student's informations." << endl << endl;
 			cout << setw(40) << setfill(' ') << left << "Remove User" << "[ru]" << endl;
-			cout << "Input <ru> then input list of usernames. Or input <ru> <list of username you want to remove (separate by space)." << endl << endl;
+			cout << "Input <ru> then input list of usernames. Or input <ru> <list of username you want to remove (separate by space)>." << endl << endl;
 			cout << setw(40) << setfill(' ') << left << "Search Teacher by name" << "[st]" << endl;
 			cout << "Input <st> <list of teachers' name> to search. Or input <st> then input <name>." << endl;
 			cout << "Input as this format <identify, name, birthday, \"phone number\", \"hometown\"> (separate by comma):" << endl << endl;

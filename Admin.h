@@ -36,7 +36,7 @@ public:
 				ss.str(username);
 				int id;
 				ss >> id;
-				for (int i = 0; i < db_st_list.size; i++) {
+				for (size_t i = 0; i < db_st_list.size; i++) {
 					if (db_st_list.list[i].st_number == id) {
 						db_st_list.removeFromList(i);
 						return 1;
@@ -44,7 +44,7 @@ public:
 				}
 			}
 			else {
-				for (int i = 0; i < db_tc_list.size; i++) {
+				for (size_t i = 0; i < db_tc_list.size; i++) {
 					if (db_tc_list.list[i].tc_identify == username) {
 						db_tc_list.removeFromList(i);
 						return 1;
