@@ -43,7 +43,7 @@ void main() {
 			ad.username = random_user.username;
 			ad.password = random_user.password;
 			ad.role = random_user.role;
-			if (adminMenu(ad, db_st_list, db_tc_list, db_user_list) == false) {
+			if (adminMenu(ad, db_st_list, db_tc_list, db_user_list, db_course_list, db_st_course_list) == false) {
 				break;
 			}
 		}

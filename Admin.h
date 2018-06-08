@@ -31,7 +31,7 @@ public:
 		}
 	}
 
-	bool removeUser(string username, UserList &db_user_list, StudentList &db_st_list, TeacherList &db_tc_list) {
+	bool removeUser(string username, UserList &db_user_list, StudentList &db_st_list, TeacherList &db_tc_list, CourseList &db_course_list, StudentCourseList &db_st_course_list) {
 		int index = db_user_list.findUserByUsername(username);
 		if (index == -1 || db_user_list.list[index].role == "admin") {
 			return 0;
@@ -46,21 +46,33 @@ public:
 				for (size_t i = 0; i < db_st_list.size; i++) {
 					if (db_st_list.list[i].st_number == id) {
 						db_st_list.removeFromList(i);
-						db_user_list.removeFromList(index);
-						return 1;
+						break;
+					}
+				}
+				for (size_t i = 0; i < db_st_course_list.size; i++) {
+					if (db_st_course_list.list[i].st_num == id) {
+						db_st_course_list.removeFromList(i);
+						break;
 					}
 				}
 			}
 			else {
+				string name;
 				for (size_t i = 0; i < db_tc_list.size; i++) {
 					if (db_tc_list.list[i].tc_identify == username) {
+						name = db_tc_list.list[i].tc_name;
 						db_tc_list.removeFromList(i);
-						db_user_list.removeFromList(index);
-						return 1;
+						break;
+					}
+				}
+				for (size_t i = 0; i < db_course_list.size; i++) {
+					while (db_course_list.list[i].falcuty == name) {
+						db_course_list.removeFromList(i);
 					}
 				}
 			}
-			return 0;
+			db_user_list.removeFromList(index);
+			return 1;
 		}
 	}
 
@@ -71,6 +83,9 @@ public:
 		cout << "Input number, name, birthday, \"hometown\": (separate by comma)" << endl;
 		string s;
 		getline(cin, s, ',');
+		if (s == "q") {
+			return 0;
+		}
 		student.username = student.password = s;
 		istringstream iss;
 		iss.str(s);
@@ -103,6 +118,9 @@ public:
 		cout << "Input identify, name, birthday, \"phone number\", \"hometown\": (separate by comma)" << endl;
 		string s;
 		getline(cin, s, ',');
+		if (s == "q") {
+			return 0;
+		}
 		tc.tc_identify = teacher.username = teacher.password = s;
 		getline(cin, s, ',');
 		to_upper(s);

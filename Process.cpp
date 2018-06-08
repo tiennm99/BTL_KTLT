@@ -475,7 +475,7 @@ bool teacherProcess(Teacher& tc, UserList& user_list, StudentCourseList& db_st_c
 
 #pragma region Tien
 
-bool adminMenu(Admin& ad, StudentList& db_st_list, TeacherList& db_tc_list, UserList& user_list)
+bool adminMenu(Admin& ad, StudentList& db_st_list, TeacherList& db_tc_list, UserList& user_list, CourseList &db_course_list, StudentCourseList &db_st_course_list)
 {
 	while (ad.isLogin() == true) {
 		cout << setw(40) << setfill('-') << "-" << "ADMIN" << setw(40) << setfill('-') << "-" << endl;
@@ -504,7 +504,7 @@ bool adminMenu(Admin& ad, StudentList& db_st_list, TeacherList& db_tc_list, User
 			else agvList.addToList(agv);
 		} while (true);
 		if (agvList.list[0] == "e" && agvList.size == 1) return false;
-		if (adminProcess(ad, user_list, db_st_list, db_tc_list, agvList) == true) {
+		if (adminProcess(ad, user_list, db_st_list, db_tc_list, db_course_list, db_st_course_list, agvList) == true) {
 
 		}
 		else {
@@ -514,7 +514,7 @@ bool adminMenu(Admin& ad, StudentList& db_st_list, TeacherList& db_tc_list, User
 	return true;
 }
 
-bool adminProcess(Admin& ad, UserList& user_list, StudentList& db_st_list, TeacherList& db_tc_list, arrayList<string> agvList) {
+bool adminProcess(Admin& ad, UserList& user_list, StudentList& db_st_list, TeacherList& db_tc_list, CourseList &db_course_list, StudentCourseList &db_st_course_list, arrayList<string> agvList) {
 	if (agvList.list[0] == "cp") {
 		if (agvList.size == 2) {
 			string newPassword = agvList.list[1];
@@ -658,8 +658,8 @@ bool adminProcess(Admin& ad, UserList& user_list, StudentList& db_st_list, Teach
 				else removeList.addToList(username);
 			} while (true);
 			arrayList<string> remove_unsuccess;
-			for (size_t i = 1; i < removeList.size; i++) {
-				if (ad.removeUser(removeList.list[i], user_list, db_st_list, db_tc_list) == 1) {
+			for (size_t i = 0; i < removeList.size; i++) {
+				if (ad.removeUser(removeList.list[i], user_list, db_st_list, db_tc_list, db_course_list, db_st_course_list) == 1) {
 
 				}
 				else {
@@ -682,7 +682,7 @@ bool adminProcess(Admin& ad, UserList& user_list, StudentList& db_st_list, Teach
 		{
 			arrayList<string> remove_unsuccess;
 			for (size_t i = 1; i < agvList.size; i++) {
-				if (ad.removeUser(agvList.list[i], user_list, db_st_list, db_tc_list) == 1) {
+				if (ad.removeUser(agvList.list[i], user_list, db_st_list, db_tc_list, db_course_list, db_st_course_list) == 1) {
 					
 				}
 				else {
