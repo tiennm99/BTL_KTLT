@@ -1,14 +1,21 @@
 #ifndef _ADMIN_
 #define _ADMIN_
 
-#include<string>
-#include<iostream>
-#include<iomanip>
-#include<sstream>
+#include <iostream>
+#include <iomanip>
+#include <sstream>
+#include <string>
+#include <cctype>
 #include "Helper.h"
 #include "User.h"
 
 using namespace std;
+
+inline void to_upper(string &s) {
+	for (size_t i = 0; i < s.length(); i++) {
+		s[i] = toupper(s[i]);
+	}
+}
 
 class Admin : public User {
 public:
@@ -23,6 +30,7 @@ public:
 			return 1;
 		}
 	}
+
 	bool removeUser(string username, UserList &db_user_list, StudentList &db_st_list, TeacherList &db_tc_list) {
 		int index = db_user_list.findUserByUsername(username);
 		if (index == -1 || db_user_list.list[index].role == "admin") {
@@ -30,7 +38,6 @@ public:
 		}
 		else {
 			string s = db_user_list.list[index].role;
-			db_user_list.removeFromList(index);
 			if (s == "student") {
 				stringstream ss;
 				ss.str(username);
@@ -39,6 +46,7 @@ public:
 				for (size_t i = 0; i < db_st_list.size; i++) {
 					if (db_st_list.list[i].st_number == id) {
 						db_st_list.removeFromList(i);
+						db_user_list.removeFromList(index);
 						return 1;
 					}
 				}
@@ -47,10 +55,12 @@ public:
 				for (size_t i = 0; i < db_tc_list.size; i++) {
 					if (db_tc_list.list[i].tc_identify == username) {
 						db_tc_list.removeFromList(i);
+						db_user_list.removeFromList(index);
 						return 1;
 					}
 				}
 			}
+			return 0;
 		}
 	}
 
@@ -62,8 +72,16 @@ public:
 		string s;
 		getline(cin, s, ',');
 		student.username = student.password = s;
-		istringstream(s) >> st.st_number;
+		istringstream iss;
+		iss.str(s);
+		iss >> st.st_number;
+		if (iss.fail()) {
+			cin.clear();
+			cin.ignore(INT_MAX, '\n');
+			return 0;
+		}
 		getline(cin, s, ',');
+		to_upper(s);
 		st.st_name = s;
 		getline(cin, s, ',');
 		st.st_birthday = s;
@@ -77,6 +95,7 @@ public:
 			return 0;
 		}
 	}
+
 	bool addTeacher(TeacherList &db_tc_list, UserList &db_user_list) {
 		Teacher tc;
 		User teacher;
@@ -86,6 +105,7 @@ public:
 		getline(cin, s, ',');
 		tc.tc_identify = teacher.username = teacher.password = s;
 		getline(cin, s, ',');
+		to_upper(s);
 		tc.tc_name = s;
 		getline(cin, s, ',');
 		tc.tc_birthday = s;

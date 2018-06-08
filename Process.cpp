@@ -6,7 +6,6 @@
 #include <iostream>
 #include <string>
 #include <sstream>
-#include <cctype>
 
 using namespace std;
 
@@ -475,11 +474,6 @@ bool teacherProcess(Teacher& tc, UserList& user_list, StudentCourseList& db_st_c
 }
 
 #pragma region Tien
-void to_upper(string &s) {
-	for (size_t i = 0; i < s.length(); i++) {
-		s[i] = toupper(s[i]);
-	}
-}
 
 bool adminMenu(Admin& ad, StudentList& db_st_list, TeacherList& db_tc_list, UserList& user_list)
 {
@@ -545,7 +539,7 @@ bool adminProcess(Admin& ad, UserList& user_list, StudentList& db_st_list, Teach
 			cout << "Add Student successful!" << endl;
 		}
 		else {
-			cout << "Add Student unsuccessful! May be the same username have exist." << endl;
+			cout << "Add Student unsuccessful!\nMay be error in your input or the same username have exist." << endl;
 		}
 		return true;
 	}
@@ -765,4 +759,5 @@ bool adminProcess(Admin& ad, UserList& user_list, StudentList& db_st_list, Teach
 	}
 	return false;
 }
+
 #pragma endregion
