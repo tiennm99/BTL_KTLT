@@ -5,11 +5,10 @@
 #include "Helper.h"
 using namespace std;
 
-string toUpperCase(string&input);
-
 struct Course{
 	string course_id;
 	string sub_id;
+	string fal_id;
 	string falcuty;
 	string sub_name;
 	int total_st;
@@ -17,10 +16,11 @@ struct Course{
 	int credit;
 
 	Course() {};
-	Course(string sub_id, string sub_name, string falcuty) {
+	Course(string sub_id, string sub_name, string falcuty, string fal_id) {
 		this->sub_id = sub_id;
 		this->sub_name = sub_name;
 		this->falcuty = falcuty;
+		this->fal_id = fal_id;
 	};
 	~Course() {};
 
@@ -29,10 +29,11 @@ struct Course{
 			this->max_st++;
 		}
 	}
-	void CreateNewCourse(string sub_id, string sub_name, string falcuty, int total_st, int max_st, int credit){
+	void CreateNewCourse(string sub_id, string sub_name, string falcuty, string fal_id, int total_st, int max_st, int credit){
 		this->sub_id = sub_id;
 		this->sub_name = sub_name;
 		this->falcuty = falcuty;
+		this->fal_id = fal_id;
 		this->total_st = total_st;
 		this->max_st = max_st;
 		this->credit = credit;
@@ -52,7 +53,9 @@ public:
 	CourseList* findAllCourseByName(arrayList<string> name_list);
 	CourseList* findCourseByFacuty(string fal);
 	CourseList* findAllCourseByFalcuty(arrayList<string> fal_list);
-	bool isCourseExist(string id);
+	CourseList* findCourseByFacutyId(string fal_id);
+	CourseList* findAllCourseByFalcutyId(arrayList<string> falid_list);
+	bool isCourseExist(string,Course&);
 	bool addToCourseList(Course newCourse); // add a opened course to courseList ( course.csv )
 	void addStudentToCourse(string course_id);
 	void removeStudentToCourse(string course_id);

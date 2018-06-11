@@ -47,3 +47,31 @@ void UserList::updateList(User& user) {
 		this->list[index].password = user.password;
 	}
 }
+
+
+
+bool cp(User user, arrayList<string> agvList, UserList &user_list) {
+	string newPassword;
+	if (agvList.size != 1) {
+		for (int i = 1; i < agvList.size; i++) newPassword += agvList.list[i];
+	}
+	else if (agvList.size == 1) {
+		cout << "Input your new password: ";
+		getline(cin, newPassword);
+		newPassword = user.removeSpaces(newPassword);
+	}
+	if (!user.checkNewPass(newPassword)) {
+		cout << "NEW PASSWORD MUST NOT CONTAIN ', . ? @ $ # ...' CHARATER (SYSTEM REQUIRE),TRY AGAIN LATER.\n";
+		cout << "PRESS ENTER TO GO BACK\n";
+		cin.get();
+		return true;
+	}
+	else {
+		user.changePassword(newPassword);
+		user_list.updateList(user);
+		cout << "CHANGE PASSWORD SUCCESSFULLY--YOUR NEWPASS (please remember it): " << newPassword << endl;
+		cout << "PRESS ENTER TO GO BACK\n";
+		cin.get();
+		return true;
+	}
+}

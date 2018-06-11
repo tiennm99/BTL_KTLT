@@ -20,16 +20,20 @@ public:
 	string tc_phone_number;
 	string tc_home_town;
 	CourseList* teacherCourse(CourseList db_courseList); //nhung khoa hoc ma teacher da mo
+	CourseList* tcSumCourse(CourseList db_course_list,StudentCourseList);
+	CourseList* tcNotSumCourse(CourseList db_course_list, StudentCourseList);
 	Teacher(){};
 	Teacher(string id){
 		this->tc_identify = id;
 	}
 	~Teacher(){};
-
+	bool viewCourse(Teacher& tc, StudentCourseList& db_st_course_list, CourseList& db_course_list);
+	bool openNewCourse(Teacher& tc, StudentCourseList& db_st_course_list, CourseList& db_course_list);
 	bool openCourse(CourseList& db_courseList, Course newCourse); //mo mot khoa hoc
 	bool gradingCourse(StudentCourseList& st_join_course); //tong ket diem va sua diem
 
-	void showTeacherCouser(CourseList* tc_course);//Xuat thong tin nhung khoa hoc ma teacher da mo
+
+	void showTeacherCouser(CourseList tc_course,StudentCourseList st_course);//Xuat thong tin nhung khoa hoc ma teacher da mo
 	Teacher& operator=(User u){
 		this->username = u.username;
 		this->password = u.password;

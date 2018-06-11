@@ -44,7 +44,14 @@ public:
 		index = -1;
 		return false;
 	}
-
+	bool isExist(T data) {
+		for (size_t i = 0; i < size; i++) {
+			if (list[i] == data) {
+				return true;
+			}
+		}
+		return false;
+	}
 	arrayList<T>& operator=(arrayList<T> &r) {
 		if (this == &r)return *this;
 		this->arrayCapacity = r.arrayCapacity;
@@ -86,11 +93,15 @@ template <class T>
 void arrayList<T>::removeFromList_(T data) {
 	int index;
 	this->isExist(data, index);
-	memmove(this->list + index, this->list + index + 1, sizeof(T)*size);
-	size--;
+	if (index == this->size - 1) {
+		size--;
+	}
+	else if (index != -1) {
+		memmove(this->list + index, this->list + index + 1, sizeof(T)*size);
+		size--;
+	}
 	if (arrayCapacity - size > 100) {
 		modifyListSize();
 	}
 }
-
 #endif // _HELPER_

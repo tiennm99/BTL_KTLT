@@ -1,23 +1,62 @@
 #include "Student.h"
 using namespace std;
 
-bool Student::getStudentCourse(StudentCourseList db_st_course_list, studentCourse& enrolledCourse) {
+void Student::getSemesterCredit(studentCourse& enrolledCourse, CourseList* db_courseList) {
+	arrayList<string> current_course_id;
+	arrayList<string> done_course_id;
+	for (size_t i = 0; i < enrolledCourse.st_course.size; i++) {
+		if (enrolledCourse.st_point.list[i] == -1) {
+			current_course_id.addToList(enrolledCourse.st_course.list[i]);
+		}
+		else {
+			done_course_id.addToList(enrolledCourse.st_course.list[i]);
+		}
+	}
+	CourseList* st_course_detail = db_courseList->findAllCourseById(current_course_id);
+	CourseList* _st_course_detail = db_courseList->findAllCourseById(done_course_id);
+	int credit = 0;
+	int _credit = 0;
+	double sum = 0;// for gpa's calulation
+	for (size_t i = 0; i < st_course_detail->size; i++) {
+		credit += st_course_detail->list[i].credit;
+	}
+	enrolledCourse.curr_credit = credit;
+
+	for (size_t i = 0; i < _st_course_detail->size; i++) {
+		int index;
+		enrolledCourse.st_course.isExist(_st_course_detail->list[i].course_id, index);
+		_credit += _st_course_detail->list[i].credit;
+		sum += _st_course_detail->list[i].credit*enrolledCourse.st_point.list[index];
+	}
+	enrolledCourse.done_credit = _credit;
+	enrolledCourse.setGPA(sum / _credit);
+}
+
+bool Student::getStudentCourse(StudentCourseList db_st_course_list, studentCourse& enrolledCourse, CourseList* db_courseList) {
 	for (size_t i = 0; i < db_st_course_list.size; i++) {
 		if (db_st_course_list.list[i].st_num == this->st_number) {
 			enrolledCourse = db_st_course_list.list[i];
+			getSemesterCredit(enrolledCourse, db_courseList);
 			return true;
 		}
-	}
+	}	
 	return false;
 }
 bool Student::modifyBaseStudentCourse(StudentCourseList& db_st_course_list, studentCourse enrolledCourse) {
+	bool edit = false;
 	for (size_t i = 0; i < db_st_course_list.size; i++) {
 		if (db_st_course_list.list[i].st_num == this->st_number) {
+			edit = true;
 			if (enrolledCourse.isExist()){
 				db_st_course_list.list[i] = enrolledCourse;
 			}
 			else db_st_course_list.removeFromList_(enrolledCourse);
 			return true;
+		}
+	}
+	if (edit == false) {
+		if (enrolledCourse.isExist()) {
+			db_st_course_list.addToList(enrolledCourse);
 		}
 	}
 	return false;
@@ -35,16 +74,19 @@ void Student::showStudentCourse(CourseList* db_courseList, studentCourse enrolle
 			<< left << setw(10) << "Tin chi" << endl;
 		cout << setfill('-') << setw(50) << setfill(' ') << endl;
 		for (size_t i = 0; i < enrolledCourse.st_course.size; i++) {
+			int index = 0;
+			enrolledCourse.st_course.isExist(st_course_detail->list[i].course_id, index);
 			cout << left << setw(5) << i + 1
 				<< left << setw(30) << st_course_detail->list[i].falcuty
 				<< left << setw(20) << st_course_detail->list[i].course_id
 				<< left << setw(15) << st_course_detail->list[i].sub_id
 				<< left << setw(30) << st_course_detail->list[i].sub_name
-				<< left << setw(10) << enrolledCourse.st_point.list[i]
+				<< left << setw(10) << enrolledCourse.st_point.list[index]
 				<< left << setw(10) << st_course_detail->list[i].credit << endl;
 		}
 		cout << endl;
-		cout << "Your GPA: " << enrolledCourse.getGPA() << endl;
+		enrolledCourse.getGPA();
+		cout << "Your GPA: " << setprecision(3) << enrolledCourse.getGPA() << endl;
 	}
 	else cout << "You haven't enroll in any course" << endl;
 };
@@ -52,23 +94,37 @@ bool Student::joinCourse(studentCourse enrolledCourse, arrayList<string>&courseI
 	if (st_number == enrolledCourse.st_num) {
 		arrayList<string> error_course;
 		for (size_t i = 0; i < courseId.size; i++) {
-			if (db_course_list.isCourseExist(courseId.list[i])) {
-				if (enrolledCourse.addCourse(courseId.list[i])) {
+			Course* course_detail = db_course_list.findCourseById(courseId.list[i]);
+			if (db_course_list.isCourseExist(courseId.list[i], *course_detail)) {
+				if (enrolledCourse.addCourse(courseId.list[i], course_detail->credit)) {
 					db_course_list.addStudentToCourse(courseId.list[i]);
-					courseId.removeFromList(i);
 				}
+				else {
+					error_course.addToList(courseId.list[i]);
+				}
+			}
+			else {
+				error_course.addToList(courseId.list[i]);
 			}
 		}
 		modifyBaseStudentCourse(db_st_course_list, enrolledCourse);
+		courseId = error_course;
 		return true;
 	}
 	else return false;
 };
 bool Student::cancelCourse(studentCourse enrolledCourse, arrayList<string> courseId, StudentCourseList& db_st_course_list, CourseList& db_course_list) {
 	if (enrolledCourse.isExist()) {
-		for (size_t i = 0; i < courseId.size; i++){
-			enrolledCourse.st_course.removeFromList_(courseId.list[i]);
-			db_course_list.removeStudentToCourse(courseId.list[i]);
+		for (size_t i = 0; i < courseId.size; i++) {
+			if (enrolledCourse.hasEnrolled(courseId.list[i]) == true) {
+				int index = 0;
+				enrolledCourse.st_course.isExist(courseId.list[i], index);
+				if (enrolledCourse.st_point.list[index] == -1) {
+					enrolledCourse.st_course.removeFromList_(courseId.list[i]);
+					enrolledCourse.st_point.removeFromList(index);
+					db_course_list.removeStudentToCourse(courseId.list[i]);
+				}
+			}
 		}
 		modifyBaseStudentCourse(db_st_course_list, enrolledCourse);
 		return true;
@@ -104,7 +160,7 @@ inline bool operator!=(int &lhs, Student &rhs) {
 }
 
 inline bool operator==(studentCourse &lhs, studentCourse&rhs) {
-	return lhs.st_num = rhs.st_num;
+	return lhs.st_num == rhs.st_num;
 }
 //-----------------STUDENT_LIST------------------------
 StudentList StudentList::findStudentByNameKeyWord(string keyword[], size_t n) {
@@ -162,7 +218,6 @@ StudentCourseList* StudentCourseList::findStudentJoinCourse(string courseID){
 	for (size_t i = 0; i < this->size; i++){
 		for (size_t j = 0; j < this->list[i].st_course.size; j++){
 			if (this->list[i].st_course.list[j].compare(courseID) == 0){
-				//data->addToList(this->list[i]);
 				data->list[a].st_num = this->list[i].st_num;
 				data->list[a].st_point.list[0] = this->list[i].st_point.list[j];
 				data->list[a].st_course.list[0] = this->list[i].st_course.list[j];
@@ -174,18 +229,16 @@ StudentCourseList* StudentCourseList::findStudentJoinCourse(string courseID){
 	return data;
 }
 //Ghi diem vao file student_course.
-void StudentCourseList::updatePoint(/*StudentCourseList& db_st_cl*/ StudentCourseList st_join_course){
-	//for (size_t i = 0; i < st_join_course.size; i++){
+void StudentCourseList::updatePoint( StudentCourseList st_join_course){
 	int i = 0;
-		for (size_t j = 0; j < this->size; j++){
-			for (int k = 0; k < this->list[j].st_course.size; k++){
-				if (st_join_course.list[i].st_course.list[0].compare(this->list[j].st_course.list[k]) == 0){
-					this->list[j].st_point.list[k] = st_join_course.list[i].st_point.list[0];
-					i++;
-				}
+	for (size_t j = 0; j < this->size; j++){
+		for (size_t k = 0; k < this->list[j].st_course.size; k++){
+			if (st_join_course.list[i].st_course.list[0].compare(this->list[j].st_course.list[k]) == 0){
+				this->list[j].st_point.list[k] = st_join_course.list[i].st_point.list[0];
+				i++;
 			}
 		}
-	//}
+	}
 }
 
 //Xem khoa hoc da dc cham diem chua.

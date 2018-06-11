@@ -1,6 +1,9 @@
 #ifndef _USER_
 #define _USER_
+#include <iostream>
 #include <string>
+#include <sstream>
+#include <algorithm>
 #include "Helper.h"
 using namespace std;
 
@@ -26,6 +29,17 @@ public:
 		if (this->username == "")return false;
 		else return true;
 	}
+	string removeSpaces(string str)
+	{
+		str.erase(remove(str.begin(), str.end(), ' '), str.end());
+		return str;
+	}
+	bool checkNewPass(string np) {
+		for (int i = 0; i < np.length(); i++) {
+			if (np[i] == ',' || np[i] == '.' || np[i] == '?' || np[i] == '/' || np[i] == '>' || np[i] == '<' ||np[i] == '@' || np[i] == '#' || np[i] == '!') return false;
+		}
+		return true;
+	}
 	void changePassword(string newPassword) {
 		this->password = newPassword;
 	}
@@ -45,5 +59,7 @@ public:
 	bool authentication(User& random_user);
 	void updateList(User& user);
 };
+
+bool cp(User user, arrayList<string> agvList, UserList &user_list);
 
 #endif // !_USER_

@@ -33,7 +33,14 @@ inline bool operator!=(string &lhs, Course &rhs) {
 
 bool CourseList::addToCourseList(Course newCourse){
 	newCourse.total_st = 0;
-	if (this->isCourseExist(newCourse.course_id) == true)
+	/*if (this->isCourseExist(newCourse.course_id) == true)
+		return false;
+	else{
+		this->addToList(newCourse);
+		return true;
+	}*/
+	Course dummy;
+	if (this->isCourseExist(newCourse.course_id, dummy) == true)
 		return false;
 	else{
 		this->addToList(newCourse);
@@ -44,21 +51,23 @@ bool CourseList::addToCourseList(Course newCourse){
 
 void Course::printCourseInfo(){
 
-	cout << setfill('-') << setw(50) << "-" << "Course" << setfill('-') << setw(50) << "-" << setfill(' ') << endl;
+	cout << setfill('-') << setw(50) << "-" << "New Course" << setfill('-') << setw(55) << "-" << setfill(' ') << endl;
 	cout
-		<< left << setw(10) << "Course Id"
+		<< left << setw(20) << "Course Id"
+		<< left << setw(10) << "Fal ID"
 		<< left << setw(25) << "Falcuty"
-		<< left << setw(15) << "Subject Id"
-		<< left << setw(25) << "Subject Name"
+		<< left << setw(15) << "Sub_Id"
+		<< left << setw(35) << "Subject Name"
 
 		<< left << setw(6) << "Credit" << endl;
 	cout << setfill('-') << setw(110) << "-" << setfill(' ') << endl;
 
 	cout
-		<< left << setw(10) << this->course_id
+		<< left << setw(20) << this->course_id
+		<< left << setw(10) <<this->fal_id
 		<< left << setw(25) << this->falcuty
 		<< left << setw(15) << this->sub_id
-		<< left << setw(25) << this->sub_name
+		<< left << setw(35) << this->sub_name
 
 		<< left << setw(6) << this->credit << endl;
 
@@ -141,7 +150,7 @@ void CourseList::printCourse() {
 	cout << left << setw(5) << "STT"
 		<< left << setw(10) << "Course Id"
 		<< left << setw(25) << "Falcuty"
-		<< left << setw(15) << "Subject Id"
+		<< left << setw(15) << "Sub_id"
 		<< left << setw(25) << "Subject Name"
 		<< left << setw(15) << "Student/Slot"
 		<< left << setw(6) << "Credit" << endl;
@@ -187,11 +196,45 @@ CourseList* CourseList::findAllCourseByFalcuty(arrayList<string> fal_list) {
 	}
 	return cList;
 }
-bool CourseList::isCourseExist(string id) {
+
+CourseList* CourseList::findCourseByFacutyId(string fal_id) {
+	CourseList* cList = new CourseList();
+	for (size_t i = 0; i < size; i++) {
+		string s = this->list[i].fal_id;
+		toUpperCase(s);
+		toUpperCase(fal_id);
+		if (s.find(fal_id) != string::npos) {
+			cList->addToList(list[i]);
+		}
+	}
+	return cList;
+}
+CourseList* CourseList::findAllCourseByFalcutyId(arrayList<string> falid_list) {
+	CourseList* cList = new CourseList();
+	for (size_t i = 0; i < this->size; i++) {
+		string s = this->list[i].fal_id;
+		for (size_t j = 0; j < falid_list.size; j++) {
+			string s1 = falid_list.list[j];
+			toUpperCase(s);
+			toUpperCase(s1);
+			int found = s.find(s1);
+			if (found != string::npos) {
+				cList->addToList(list[i]);
+				break;
+			}
+		}
+	}
+	return cList;
+}
+bool CourseList::isCourseExist(string id, Course&out_data) {
 	Course* tmp = new Course();
-	tmp = findCourseById(id);
+	tmp = findCourseById(id);	
 	if (tmp == NULL) {
 		return false;
 	}
-	else return true;
+	else
+	{
+		out_data = *tmp;
+		return true;
+	}
 }

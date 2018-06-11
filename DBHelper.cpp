@@ -47,6 +47,9 @@ bool loadCourse(CourseList &courseList) {
 			data.course_id = str;
 
 			getline(ss, str, ',');
+			data.fal_id = str;
+
+			getline(ss, str, ',');
 			data.falcuty = str;
 
 			getline(ss, str, ',');
@@ -98,7 +101,7 @@ bool loadStudentCourse(StudentCourseList &st_course_list) {
 
 			sstr2.str(str2);
 			while (getline(sstr2, str2, ',')) {
-				int num;
+				double num;
 				istringstream(str2) >> num;
 				data.st_point.addToList(num);
 			}
@@ -144,8 +147,7 @@ bool loadStudentInfo(StudentList &st_list) {
 		return true;
 	}
 }
-
-bool loadTeacherInfo(TeacherList& tc_list) {
+bool loadTeacherInfo(TeacherList& tc_list){
 	ifstream file;
 	file.open("teacher.csv", ios::in);
 	if (file.is_open() == NULL) {
@@ -180,12 +182,12 @@ bool loadTeacherInfo(TeacherList& tc_list) {
 		return true;
 	}
 }
-
 void writeToCouresFile(CourseList &courseList) {
 	ofstream file;
-	file.open("course.csv", ios::trunc);
+	file.open("course.csv", ios::out);
 	for (size_t i = 0; i<courseList.size; i++) {
 		file << courseList.list[i].course_id << ",";
+		file << courseList.list[i].fal_id << ",";
 		file << courseList.list[i].falcuty << ",";
 		file << courseList.list[i].sub_id << ",";
 		file << courseList.list[i].sub_name << ",";
@@ -197,7 +199,7 @@ void writeToCouresFile(CourseList &courseList) {
 }
 void writeToStudentFile(StudentList &st_list) {
 	ofstream file;
-	file.open("student.csv", ios::trunc);
+	file.open("student.csv", ios::out);
 	for (size_t i = 0; i< st_list.size; i++) {
 		file << st_list.list[i].st_number << ",";
 		file << st_list.list[i].st_name << ",";
@@ -206,11 +208,10 @@ void writeToStudentFile(StudentList &st_list) {
 	}
 	file.close();
 }
-
-void writeToTeacherFile(TeacherList &tc_list) {
+void writeToTeacherFile(TeacherList &tc_list){
 	ofstream file;
-	file.open("teacher.csv", ios::trunc);
-	for (size_t i = 0; i < tc_list.size; i++) {
+	file.open("teacher.csv", ios::out);
+	for (size_t i = 0; i < tc_list.size; i++){
 		file << tc_list.list[i].tc_identify << ",";
 		file << tc_list.list[i].tc_name << ",";
 		file << tc_list.list[i].tc_birthday << ",";
@@ -219,10 +220,9 @@ void writeToTeacherFile(TeacherList &tc_list) {
 	}
 	file.close();
 }
-
 void writeToStudentCourseFile(StudentCourseList &st_course_list) {
 	ofstream file;
-	file.open("student_course.csv", ios::trunc);
+	file.open("student_course.csv", ios::out);
 
 	for (size_t i = 0; i< st_course_list.size; i++) {
 		int num = st_course_list.list[i].getCourseNum();
@@ -251,7 +251,7 @@ void writeToStudentCourseFile(StudentCourseList &st_course_list) {
 }
 void writeToUserFile(UserList &user_list) {
 	ofstream file;
-	file.open("user.csv", ios::trunc);
+	file.open("user.csv", ios::out);
 	for (size_t i = 0; i< user_list.size; i++) {
 		file << user_list.list[i].username << ",";
 		file << user_list.list[i].password << ",";
@@ -259,4 +259,3 @@ void writeToUserFile(UserList &user_list) {
 	}
 	file.close();
 }
-

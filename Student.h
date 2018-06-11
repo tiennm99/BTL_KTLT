@@ -13,12 +13,16 @@ private:
 	double gpa;
 public:
 	int st_num;
+	int curr_credit;
+	int done_credit;// so tin cac mon da hoc
 	arrayList<string> st_course;
-	arrayList<int> st_point;
+	arrayList<double> st_point;
 
 	studentCourse() {
 		this->st_num = 0;
 		this->gpa = 13.0;
+		this->curr_credit = 0;
+		this->done_credit = 0;
 	}
 	bool isExist() {
 		if (st_course.size == 0) {
@@ -35,17 +39,18 @@ public:
 		}
 		return false;
 	}
-	bool addCourse(string courseId) {
-		if (hasEnrolled(courseId) == false) {
+	bool addCourse(string courseId, int credit) {
+		if (hasEnrolled(courseId) == false && curr_credit + credit <= 20) {
 			this->st_course.addToList(courseId);
 			this->st_point.addToList(-1);
+			curr_credit += credit;
 			return true;
 		}
 		return false;
 	}
 	double getGPA() { return this->gpa; }
-	bool setGPA(User &user, double newGPA) {
-		if (user.role == "teacher") {
+	bool setGPA(double newGPA) {
+		if (done_credit > 0) {
 			this->gpa = newGPA;
 			return true;
 		}
@@ -60,6 +65,8 @@ public:
 		this->st_num = data.st_num;
 		this->st_course = data.st_course;
 		this->st_point = data.st_point;
+		this->curr_credit = data.curr_credit;
+		this->done_credit = data.done_credit;
 		this->gpa = data.getGPA();
 		return *this;
 	}
@@ -69,9 +76,9 @@ public:
 	StudentCourseList() {};
 	~StudentCourseList() {};
 	StudentCourseList* findStudentJoinCourse(string courseID); //tim nhung sinh vien tham gia 1 course nhat dinh (de lay diem)
-	void updatePoint(/*StudentCourseList& db_st_cl, */StudentCourseList st_join_course); //cap nhat diem vao database
+	void updatePoint(StudentCourseList st_join_course); //cap nhat diem vao database
 	bool isGrade(); //xem course hoc da cham diem chua ( StudentCourseList.st_point.list[0->size] full =-1)
-	
+
 	studentCourse findStudentCourse(int st_num) {
 		studentCourse data;
 		for (size_t i = 0; i < this->size; i++) {
@@ -95,12 +102,12 @@ public:
 	};
 	Student() {}
 	~Student() {};
-	bool getStudentCourse(StudentCourseList db_st_course_list, studentCourse& enrolledCourse);
+	bool getStudentCourse(StudentCourseList db_st_course_list, studentCourse& enrolledCourse, CourseList* db_courseList);
 	bool modifyBaseStudentCourse(StudentCourseList& db_st_course_list, studentCourse enrolledCourse);
 	void showStudentCourse(CourseList* db_courseList, studentCourse enrolledCourse);
 	bool joinCourse(studentCourse enrolledCourse, arrayList<string>&courseId, StudentCourseList& db_st_course_list, CourseList& db_course_list);
 	bool cancelCourse(studentCourse enrolledCourse, arrayList<string> courseId, StudentCourseList& db_st_course_list, CourseList& db_course_list);
-
+	void getSemesterCredit(studentCourse& enrolledCourse, CourseList* db_courseList);
 	CourseList* searchForCourseByName(arrayList<string> cList, CourseList db_course_list);
 
 	Student& operator=(User u) {
@@ -116,12 +123,11 @@ class StudentList : public arrayList<Student>{
 public:
 	StudentList() {};
 	~StudentList() {};
+	void print();
 
 	StudentList findStudentByNameKeyWord(string keyword[], size_t n);
 	bool getStudentInfo(Student& st);
 	void removeStudentByNameKeyWord(string keyword[], size_t n);
 	void updateStudentList(Student data);
-	void print();
 };
 #endif // !_STUDENT_
-
